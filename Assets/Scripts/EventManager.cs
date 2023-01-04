@@ -5,9 +5,13 @@ using UnityEngine.SceneManagement;
 
 public class EventManager : MonoBehaviour
 {
-    //Event that minigame is bieng loaded
-    public delegate void LoadMinigame();
-    public static event LoadMinigame OnLoadMinigame;
+    public delegate void LoadEvent();
+    //Event that minigame is being loaded
+    public static event LoadEvent OnLoadMinigame;
+    //Event that board map is being loaded
+    public static event LoadEvent OnLoadBoardMap;
+    //Event that Title screen is being loaded
+    public static event LoadEvent OnLoadTitle;
 
     // Start is called before the first frame update
     void Start()
@@ -18,8 +22,37 @@ public class EventManager : MonoBehaviour
     private void OnDisable()
     {
         LoadingScreen.OnAnimationFinished -= LoadMinigameFinished;
+        LoadingScreen.OnAnimationFinished -= LoadBoardMapFinished;
+        LoadingScreen.OnAnimationFinished -= LoadTitleFinished;
     }
 
+    #region Title Screen Loading
+    public void LoadTitleTrigger()
+    {
+        OnLoadTitle();
+        LoadingScreen.OnAnimationFinished += LoadTitleFinished;
+    }
+    private void LoadTitleFinished()
+    {
+        SceneManager.LoadScene("Title Screen");
+    }
+    #endregion
+
+    #region Board Map Loading
+    public void LoadBoardMapTrigger()
+    {
+        OnLoadBoardMap();
+        LoadingScreen.OnAnimationFinished += LoadBoardMapFinished;
+    }
+
+    private void LoadBoardMapFinished()
+    {
+        SceneManager.LoadScene("Test Board");
+    }
+
+    #endregion
+
+    #region Minigame loading
     public void LoadMinigameTrigger()
     {
         // Broadcast the event that we are loading a minigame
@@ -37,15 +70,17 @@ public class EventManager : MonoBehaviour
         SceneManager.LoadScene("TestMinigame");
     }
 
-    #region Task 1
-    /***TO-DO***
-     Implement SelectMinigame(), a semi-random selection algorithim to determine minigame.
-     First ever selection is random, then all folowing minigame selections should have some
-     way of prioritizing unplayed minigames, while retaining a somewhat random nature.   */
+        #region Task 1
+        /***TO-DO***
+         Implement SelectMinigame(), a semi-random selection algorithim to determine minigame.
+         First ever selection is random, then all folowing minigame selections should have some
+         way of prioritizing unplayed minigames, while retaining a somewhat random nature.   */
 
-    private string SelectMinigame()
-    {
-        return null;
-    }
+        private string SelectMinigame()
+        {
+            return null;
+        }
+        #endregion
+
     #endregion
 }
