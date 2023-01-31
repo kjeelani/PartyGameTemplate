@@ -1,12 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG;
+using DG.Tweening;
 
 public class DiceBox : MonoBehaviour
 {
     private Sprite[] diceSides;
     private Sprite[] diceAnimation;
     private SpriteRenderer rend;
+    private ParticleSystem sfx;
     private bool coroutineAllowed = true;
     private int numberRolled;
 
@@ -21,6 +24,7 @@ public class DiceBox : MonoBehaviour
     void Start()
     {
         rend = GetComponent<SpriteRenderer>();
+        sfx = GetComponent<ParticleSystem>();
 
         diceSides = Resources.LoadAll<Sprite>("DiceSides/NewSides");
         diceAnimation = Resources.LoadAll<Sprite>("DiceAnimation/");
@@ -41,9 +45,14 @@ public class DiceBox : MonoBehaviour
         numberRolled = Random.Range(1, 7);
         for (int i = 0; i < 19; i++)
         {
+            //Bounce effect near the end
+            if (i == 15) transform.DOPunchScale(new Vector3(0.7f, 0.7f, 0.7f), 0.4f, 0, 0);
+
             rend.sprite = diceAnimation[(i % 5)];
             yield return new WaitForSeconds(0.08f);
         }
+        //Star particle play once number landed
+        sfx.Play();
         // Number Rolled - 1 to get zero index of sprite array
         rend.sprite = diceSides[numberRolled - 1];
 
