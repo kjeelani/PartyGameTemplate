@@ -17,6 +17,8 @@ public class BoardManager : MonoBehaviour
         player2 = GameObject.Find("Player 2");        
         player1.GetComponent<PlayerMovement>().moveAllowed = false;
         player2.GetComponent<PlayerMovement>().moveAllowed = false;
+
+        DiceBox.OnDiceRolled += UpdateDiceMove;
     }
 
     // Update is called once per frame
@@ -65,5 +67,17 @@ public class BoardManager : MonoBehaviour
         Debug.Log(player.currentNodeType);
         ////Unimplemented
         //player.currentNodeType.doAction();
+    }
+
+    private void UpdateDiceMove(int number)
+    {
+        diceSideThrown = number;
+        //MovePlayer();
+    }
+
+    private void OnDisable()
+    {
+        //Unsubscribe from event
+        DiceBox.OnDiceRolled -= UpdateDiceMove;
     }
 }
