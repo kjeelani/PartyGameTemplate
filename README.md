@@ -12,7 +12,7 @@ Follow these steps to get ready to work with our project:
 2) Download and install UnityHub [here](https://unity3d.com/get-unity/download). Be aware that UnityHub is not the Unity3D GameEngine, it is a software that helps you download and organize your projects and engines of different versions.
 3) Download **Unity 2022.1.0f1** (make sure you have correct version number!) via UnityHub. We will use this version of the engine to develop our games. There is no restriction on what modules you should install.
 4) Download GitHub Desktop [here](https://desktop.github.com/). We will mainly use GitHub as our version control system. If you do not have a GitHub account, please sign up. I also recommend you download Git by following the steps listed [here](https://sp23.datastructur.es/materials/lab/lab01/windows.html#b-install-git).
-5) The base project is [here]https://github.com/kjeelani/PartyGameTemplate). Make sure you have forked the project (ATTENTION: Please do FORK instead of CLONE).
+5) The base project is [here](https://github.com/kjeelani/PartyGameTemplate). Make sure you have forked the project (ATTENTION: Please do FORK instead of CLONE).
 6) To open and edit C# files, I recommend you use an IDE, preferably VSCode (as I can help debug and we can do Live Sharing sessions). Other options include JetBrains Rider or Atom.
 
 
