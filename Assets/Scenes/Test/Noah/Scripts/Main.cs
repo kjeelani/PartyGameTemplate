@@ -1,16 +1,22 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class Main : MonoBehaviour {
     private int currentPlayer = 0;
     private int numAlivePlayers = 4;
     private const int totalPlayers = 4;
+    private int numSlots = 5;
     private int[] playerIDs;
     private int playerIndex = 0;
     private int[] bombs;
+    [SerializeField] private GameObject header;
+    private TextMeshProUGUI headerText;
     private void Start() {
+        headerText = header.GetComponent<TextMeshProUGUI>();
+        
         bombs = generateBombs(numAlivePlayers + 1);
         playerIDs = new int[totalPlayers];
         for (int i = 0; i < totalPlayers; i++) {
@@ -45,15 +51,28 @@ public class Main : MonoBehaviour {
     private void pressButton(int buttonNumber) {
         // If this button has not been selected before
         if (bombs[buttonNumber] == 0) {
-            Debug.Log("PLAYER " + (currentPlayer + 1) + ": Button " + (buttonNumber + 1) + " has no bomb");
+            headerText.text = "PLAYER " + (currentPlayer + 1) + ": Button " + (buttonNumber + 1) + " has no bomb";
             bombs[buttonNumber] = -1;
             incrementCurrentPlayer();
         }
 
+        // Player has selected the bomb
         if (bombs[buttonNumber] == 1) {
-            Debug.Log("PLAYER " + (currentPlayer + 1) + ": Button " + (buttonNumber + 1) + " has the bomb!");
-            Debug.Log("ROUND OVER");
+            headerText.text = "GAME OVER!\nPLAYER " + (currentPlayer + 1) + ": Button " + (buttonNumber + 1) + " has the bomb!";
+            numAlivePlayers--;
+            
+            string playerString = "";
+            playerIDs[currentPlayer] = -1;
+            foreach (var hi in playerIDs) {
+                playerString += hi + ", ";
+            }
+            Debug.Log(playerString);
         }
+    }
+
+    public void adjustSlots() {
+        
+        numSlots--;
     }
 
     // This function can be accessed from the Unity engine
