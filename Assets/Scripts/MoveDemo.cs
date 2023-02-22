@@ -60,4 +60,12 @@ public class MoveDemo : MonoBehaviour
             transform.position = new Vector2(currentPosition.x - normal.x * 0.05f, currentPosition.y - normal.y * 0.05f);
         }
     }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.gameObject.CompareTag("coin"))
+        {
+            collision.gameObject.SetActive(false);
+        }
+    }
 }
