@@ -5,7 +5,7 @@ using UnityEngine;
 public class MoveDemo : MonoBehaviour
 {
     // 5 is the default, but this speed is adjustable in the Inspector
-    public float speed = 5f;
+    public float speed = 10f;
     public float jumpForce = 5f;
 
     private Rigidbody2D rb;
@@ -14,6 +14,7 @@ public class MoveDemo : MonoBehaviour
     {
         //grab the rigidbody component automatically
         rb = gameObject.GetComponent<Rigidbody2D>();
+        
     }
 
     void Update()
