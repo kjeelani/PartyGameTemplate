@@ -5,6 +5,11 @@ TagManager:
   serializedVersion: 2
   tags:
   - Border
+  - Points
+  - MiniGame
+  - Blank
+  - Board
+  - Coin
   layers:
   - Default
   - TransparentFX
@@ -19,7 +24,7 @@ TagManager:
   - Ground
   - 
   - 
-  - 
+  - Coin
   - 
   - 
   - 
