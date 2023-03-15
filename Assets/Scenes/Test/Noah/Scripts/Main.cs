@@ -19,6 +19,13 @@ public class Main : MonoBehaviour {
     [SerializeField] private GameObject header, numRounds, button1, button2, button3, button4, button5, button6, button7, button8, button9, button10;
     private TextMeshProUGUI headerText, numRoundsText;
 
+    // Character related variables
+    public GameObject player1, player2;
+    private Vector3 leftSide, middle, rightSide, startingP1, endingP1, startingP2, endingP2;
+    private bool isMovingP1, isMovingP2;
+    private float lerpTimePlayer1, lerpTimePlayer2;
+    private float moveSpeed = 0.8f;
+
     private Image buttonImage1,
         buttonImage2,
         buttonImage3,
@@ -30,6 +37,17 @@ public class Main : MonoBehaviour {
         buttonImage9,
         buttonImage10;
     private void Start() {
+        leftSide = new Vector3(-12, 0.4f, -5f);
+        middle = new Vector3(0f, 0.4f, -5f);
+        rightSide = new Vector3(12, 0.4f, -5f);
+
+        player1.transform.position = leftSide;
+        player2.transform.position = leftSide;
+
+        startingP1 = leftSide;
+        endingP1 = middle;
+        isMovingP1 = true;
+
         headerText = header.GetComponent<TextMeshProUGUI>();
         numRoundsText = numRounds.GetComponent<TextMeshProUGUI>();
         
@@ -54,6 +72,46 @@ public class Main : MonoBehaviour {
         buttonImage8 = button8.GetComponent<Image>();
         buttonImage9 = button9.GetComponent<Image>();
         buttonImage10 = button10.GetComponent<Image>();
+    }
+
+    private void Update() {
+        if (isMovingP1) {
+            movePlayers(0, startingP1, endingP1);
+        }
+
+        if (isMovingP2) {
+            movePlayers(1, startingP2, endingP2);
+        }
+    }
+
+    private void movePlayers(int playerNumber, Vector3 starting, Vector3 ending) {
+        if (playerNumber == 0) {
+            lerpTimePlayer1 += Time.deltaTime;
+            if (lerpTimePlayer1 >= moveSpeed) {
+                lerpTimePlayer1 = moveSpeed;
+            }
+
+            var perc = lerpTimePlayer1 / moveSpeed;
+            player1.transform.position = Vector3.Lerp(starting, ending, perc);
+
+            if (player1.transform.position == ending) {
+                lerpTimePlayer1 = 0;
+                isMovingP1 = false;
+            }
+        } else {
+            lerpTimePlayer2 += Time.deltaTime;
+            if (lerpTimePlayer2 >= moveSpeed) {
+                lerpTimePlayer2 = moveSpeed;
+            }
+
+            var perc = lerpTimePlayer2 / moveSpeed;
+            player2.transform.position = Vector3.Lerp(starting, ending, perc);
+            
+            if (player2.transform.position == ending) {
+                lerpTimePlayer2 = 0;
+                isMovingP2 = false;
+            }
+        }
     }
 
     private int[] generateBombs(int bombAmount) {
@@ -91,6 +149,15 @@ public class Main : MonoBehaviour {
         startingPlayerIndex = 1 - startingPlayerIndex;
         playerIndex = startingPlayerIndex;
         currentPlayer = startingPlayerIndex;
+
+        // We reset the positions of the players
+        if (startingPlayerIndex == 0) {
+            player1.transform.position = middle;
+            player2.transform.position = leftSide;
+        } else {
+            player2.transform.position = middle;
+            player1.transform.position = leftSide;
+        }
         
         // Reset player array
         for (int i = 0; i < totalPlayers; i++) {
@@ -116,7 +183,8 @@ public class Main : MonoBehaviour {
 
     private void pressButton(int buttonNumber) {
         // If this button has not been selected before
-        if (bombs[buttonNumber] == 0 && !gameOver) {
+        Debug.Log(isMovingP1);
+        if (bombs[buttonNumber] == 0 && !gameOver && !isMovingP1 && !isMovingP2) {
             numCorrectButtons++;
             changeButtonColor(buttonNumber, Color.green);
 
@@ -131,15 +199,36 @@ public class Main : MonoBehaviour {
                 gameOver = true;
                 StartCoroutine(nextRound());
             } else {
-
                 headerText.text = "PLAYER " + (currentPlayer + 1) + ": Button " + (buttonNumber + 1) + " has no bomb";
             }
             bombs[buttonNumber] = -1;
+
+            if (currentPlayer == 0) {
+                Debug.Log("HELLO");
+                startingP1 = middle;
+                endingP1 = rightSide;
+                
+                startingP2 = leftSide;
+                endingP2 = middle;
+                
+                isMovingP1 = true;
+                isMovingP2 = true;
+            } else {
+                startingP2 = middle;
+                endingP2 = rightSide;
+                
+                startingP1 = leftSide;
+                endingP1 = middle;
+                
+                isMovingP2 = true;
+                isMovingP1 = true;
+            }
+            
             incrementCurrentPlayer();
         }
 
         // Player has selected the bomb
-        if (bombs[buttonNumber] == 1 && !gameOver) {
+        if (bombs[buttonNumber] == 1 && !gameOver && !(isMovingP1 || isMovingP2)) {
             changeButtonColor(buttonNumber, Color.red);
             
             headerText.text = "GAME OVER!\nPLAYER " + (currentPlayer + 1) + ": Button " + (buttonNumber + 1) + " has the bomb!";
@@ -199,5 +288,10 @@ public class Main : MonoBehaviour {
         }
 
         currentPlayer = playerIDs[playerIndex];
+    }
+
+    private IEnumerator drumroll(int duration) {
+        // Play the noise
+        yield return new WaitForSeconds(duration);
     }
 }
