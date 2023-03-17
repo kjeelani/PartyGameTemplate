@@ -15,9 +15,11 @@ public class Main : MonoBehaviour {
     private int playerIndex = 0, startingPlayerIndex = 0;
     private int round = 1;
     private int numCorrectButtons = 0;
+    private int numWinsToEndGame = 3;
     private int[] bombs;
-    [SerializeField] private GameObject header, numRounds, button1, button2, button3, button4, button5, button6, button7, button8, button9, button10;
-    private TextMeshProUGUI headerText, numRoundsText;
+    [SerializeField] private GameObject header, numRounds, button1, button2, button3, button4, button5, button6, button7, button8, button9, button10, p1Wins, p2Wins;
+    private TextMeshProUGUI headerText, numRoundsText, p1WinsText, p2WinsText;
+    private int numP1Wins, numP2Wins;
 
     // Character related variables
     public GameObject player1, player2;
@@ -50,6 +52,8 @@ public class Main : MonoBehaviour {
 
         headerText = header.GetComponent<TextMeshProUGUI>();
         numRoundsText = numRounds.GetComponent<TextMeshProUGUI>();
+        p1WinsText = p1Wins.GetComponent<TextMeshProUGUI>();
+        p2WinsText = p2Wins.GetComponent<TextMeshProUGUI>();
         
         bombs = generateBombs(numSlots);
         playerIDs = new int[totalPlayers];
@@ -136,54 +140,65 @@ public class Main : MonoBehaviour {
 
     private IEnumerator nextRound() {
         yield return new WaitForSeconds(4);
-        
-        // Change everything to be white
-        for (int i = 0; i < numSlots; i++) {
-            changeButtonColor(i, Color.white);
-        }
-        
-        // Generate new bombs
-        bombs = generateBombs(numSlots);
-        
-        // Change the indices so that the other player now starts (for fairness)
-        startingPlayerIndex = 1 - startingPlayerIndex;
-        playerIndex = startingPlayerIndex;
-        currentPlayer = startingPlayerIndex;
 
-        // We reset the positions of the players
-        if (startingPlayerIndex == 0) {
-            player1.transform.position = middle;
-            player2.transform.position = leftSide;
+        if (numP1Wins >= numWinsToEndGame) {
+            // Player 1 has enough wins to end the game
+            headerText.text = "Player 1 Won The Game!";
+            yield return new WaitForSeconds(3);
+            returnToMenu();
+        } else if (numP2Wins >= numWinsToEndGame) {
+            // Player 2 has enough wins to end the game
+            headerText.text = "Player 2 Won The Game!";
+            yield return new WaitForSeconds(3);
+            returnToMenu();
         } else {
-            player2.transform.position = middle;
-            player1.transform.position = leftSide;
-        }
+            // Change everything to be white
+            for (int i = 0; i < numSlots; i++) {
+                changeButtonColor(i, Color.white);
+            }
         
-        // Reset player array
-        for (int i = 0; i < totalPlayers; i++) {
-            playerIDs[i] = i;
-        }
+            // Generate new bombs
+            bombs = generateBombs(numSlots);
         
-        // Increment the round
-        round++;
-        
-        // Change the texts
-        headerText.text = "Choose a button!";
-        numRoundsText.text = "Round: " + round;
+            // Change the indices so that the other player now starts (for fairness)
+            startingPlayerIndex = 1 - startingPlayerIndex;
+            playerIndex = startingPlayerIndex;
+            currentPlayer = startingPlayerIndex;
 
-        // Game is no longer over
-        gameOver = false;
-
-        // Reset the amount of players that are alive
-        numAlivePlayers = totalPlayers;
+            // We reset the positions of the players
+            if (startingPlayerIndex == 0) {
+                player1.transform.position = middle;
+                player2.transform.position = leftSide;
+            } else {
+                player2.transform.position = middle;
+                player1.transform.position = leftSide;
+            }
         
-        // Reset number of correct buttons
-        numCorrectButtons = 0;
+            // Reset player array
+            for (int i = 0; i < totalPlayers; i++) {
+                playerIDs[i] = i;
+            }
+        
+            // Increment the round
+            round++;
+        
+            // Change the texts
+            headerText.text = "Choose a button!";
+            numRoundsText.text = "Round: " + round;
+
+            // Game is no longer over
+            gameOver = false;
+
+            // Reset the amount of players that are alive
+            numAlivePlayers = totalPlayers;
+        
+            // Reset number of correct buttons
+            numCorrectButtons = 0;
+        }
     }
 
     private void pressButton(int buttonNumber) {
         // If this button has not been selected before
-        Debug.Log(isMovingP1);
         if (bombs[buttonNumber] == 0 && !gameOver && !isMovingP1 && !isMovingP2) {
             numCorrectButtons++;
             changeButtonColor(buttonNumber, Color.green);
@@ -237,8 +252,24 @@ public class Main : MonoBehaviour {
             playerIDs[currentPlayer] = -1;
             gameOver = true;
 
+            // If player 1 picked the bomb
+            if (currentPlayer == 0) {
+                // Then player 2 wins
+                numP2Wins++;
+            } else {
+                // If player 2 picked the bomb, player 1 wins
+                numP1Wins++;
+            }
+            
+            updateWinCounts();
+
             StartCoroutine(nextRound());
         }
+    }
+
+    private void updateWinCounts() {
+        p1WinsText.text = "P1 Win Count: " + numP1Wins;
+        p2WinsText.text = "P2 Win Count: " + numP2Wins;
     }
 
     private void changeButtonColor(int buttonNumber, Color color) {
@@ -293,5 +324,13 @@ public class Main : MonoBehaviour {
     private IEnumerator drumroll(int duration) {
         // Play the noise
         yield return new WaitForSeconds(duration);
+    }
+
+    /**
+     *  This method is used to return back to the main menu. Feel free to edit this method
+     */
+    private void returnToMenu() {
+        // TODO: Add a way for players to return back to the board
+        
     }
 }
