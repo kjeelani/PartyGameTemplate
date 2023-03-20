@@ -12,8 +12,9 @@ public class DiceBox : MonoBehaviour
     private ParticleSystem sfx;
     private bool coroutineAllowed = true;
     private int numberRolled;
-
-    private int turn = 1;
+    private AudioSource audioS;
+    private AudioClip diceRollSound;
+    private AudioClip diceFinishSound;
 
     //Events
     public delegate void DiceEvent(int num);
@@ -26,13 +27,17 @@ public class DiceBox : MonoBehaviour
         rend = GetComponent<SpriteRenderer>();
         sfx = GetComponent<ParticleSystem>();
 
+        audioS = GetComponent<AudioSource>();
+        diceRollSound = Resources.Load<AudioClip>("DiceRollSound");
+        diceFinishSound = Resources.Load<AudioClip>("DiceFinishSound");
+
         diceSides = Resources.LoadAll<Sprite>("DiceSides/NewSides");
         diceAnimation = Resources.LoadAll<Sprite>("DiceAnimation/");
     }
 
     private void OnMouseDown()
     {
-        if (coroutineAllowed)
+        if (coroutineAllowed && !PlayerMovement.isAnyMoving)
         {
             StartCoroutine("DiceRoll");
             coroutineAllowed = false;
@@ -43,14 +48,19 @@ public class DiceBox : MonoBehaviour
     private IEnumerator DiceRoll()
     {
         numberRolled = Random.Range(1, 7);
+        audioS.PlayOneShot(diceRollSound);
         for (int i = 0; i < 19; i++)
         {
             //Bounce effect near the end
             if (i == 15) transform.DOPunchScale(new Vector3(0.7f, 0.7f, 0.7f), 0.4f, 0, 0);
 
+            //play dice sound every 5 frames
+            if (i % 5 == 0) { audioS.PlayOneShot(diceRollSound); }
+
             rend.sprite = diceAnimation[(i % 5)];
             yield return new WaitForSeconds(0.08f);
         }
+        audioS.PlayOneShot(diceFinishSound);
         //Star particle play once number landed
         sfx.Play();
         // Number Rolled - 1 to get zero index of sprite array
@@ -58,17 +68,6 @@ public class DiceBox : MonoBehaviour
 
         //Broadcast Dice has been rolled
         OnDiceRolled(numberRolled);
-
-        //temp solution, -we want to decouple this script and BoardManager later.
-        if (turn == 1)
-        {
-            BoardManager.MovePlayer(1);
-        }
-        else if (turn == -1)
-        {
-            BoardManager.MovePlayer(2);
-        }
-        turn *= -1;
 
         coroutineAllowed = true;
     }

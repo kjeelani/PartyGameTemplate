@@ -9,75 +9,59 @@ public class BoardManager : MonoBehaviour
     public static int diceSideThrown = 0;
     public static int player1StartNode = 0;
     public static int player2StartNode = 0;
-    public static bool gameOver = false; 
+    public static bool gameOver = false;
+
+    public enum Turn { P1, P2};
+    public static Turn currentTurn = Turn.P1;
+
+    private PlayerMovement p1;
+    private PlayerMovement p2;
 
     // Use this for initialization
     void Start () {
         player1 = GameObject.Find("Player 1");
-        player2 = GameObject.Find("Player 2");        
-        player1.GetComponent<PlayerMovement>().moveAllowed = false;
-        player2.GetComponent<PlayerMovement>().moveAllowed = false;
+        player2 = GameObject.Find("Player 2");
+        p1 = player1.GetComponent<PlayerMovement>();
+        p2 = player2.GetComponent<PlayerMovement>();
 
         DiceBox.OnDiceRolled += UpdateDiceMove;
+        EventManager.OnLandMinigame += StartMinigame;
     }
 
     // Update is called once per frame
     void Update()
     {
-        PlayerMovement player1Data = player1.GetComponent<PlayerMovement>();
-        PlayerMovement player2Data = player2.GetComponent<PlayerMovement>();
-        if (player1Data.nodeIndex > player1StartNode + diceSideThrown){
-            if(player1Data.moveAllowed){
-                doNodeAction(player1Data);
-            }
-            player1Data.moveAllowed = false;
-            player1StartNode = player1Data.nodeIndex - 1;
-        }
-
-        if (player2Data.nodeIndex > player2StartNode + diceSideThrown){
-            if(player2Data.moveAllowed){
-                doNodeAction(player2Data);
-            }
-            player2Data.moveAllowed = false;
-            player2StartNode = player2Data.nodeIndex - 1;
-        }
-
-        if (player1Data.nodeIndex == player1Data.nodes.Length){
-            gameOver = true;
-        }
-
-        if (player2Data.nodeIndex == player2Data.nodes.Length){
-            gameOver = true;
-        }
+      
     }
 
-    public static void MovePlayer(int playerToMove)
+    private void StartMinigame()
     {
-        switch (playerToMove) { 
-            case 1:
-                player1.GetComponent<PlayerMovement>().moveAllowed = true;
-                break;
-            case 2:
-                player2.GetComponent<PlayerMovement>().moveAllowed = true;
-                break;
-        }
-    }
+        EventManager em = FindObjectOfType<EventManager>();
 
-    public void doNodeAction(PlayerMovement player){
-        Debug.Log(player.currentNodeType);
-        ////Unimplemented
-        //player.currentNodeType.doAction();
+
+        //Signify that a minigame was landed on
+        //Choose Random minigame
+        //Load that minigame
+        em.LoadMinigameTrigger();
     }
 
     private void UpdateDiceMove(int number)
     {
         diceSideThrown = number;
-        //MovePlayer();
+        if (currentTurn == Turn.P1){
+            p1.Move();
+            currentTurn = Turn.P2;
+        }
+        else if (currentTurn == Turn.P2) {
+            p2.Move();
+            currentTurn = Turn.P1;
+        }
     }
 
     private void OnDisable()
     {
         //Unsubscribe from event
         DiceBox.OnDiceRolled -= UpdateDiceMove;
+        EventManager.OnLandMinigame -= StartMinigame;
     }
 }

@@ -13,6 +13,10 @@ public class EventManager : MonoBehaviour
     //Event that Title screen is being loaded
     public static event LoadEvent OnLoadTitle;
 
+    public delegate void BoardEvent();
+
+    public static event BoardEvent OnLandMinigame;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -26,6 +30,13 @@ public class EventManager : MonoBehaviour
         LoadingScreen.OnAnimationFinished -= LoadTitleFinished;
     }
 
+    #region Landed On Minigame Tile
+    public static void LandedOnMinigame()
+    {
+        //Broadcast to system that a minigame tile has been landed on
+        OnLandMinigame();
+    }
+    #endregion
     #region Title Screen Loading
     public void LoadTitleTrigger()
     {
@@ -67,7 +78,7 @@ public class EventManager : MonoBehaviour
     {
         //string minigame = SelectMinigame(); <-- Uncomment after Task 1 Implemented
 
-        SceneManager.LoadScene("TestMinigame");
+        SceneManager.LoadScene("Noah Scene");
     }
 
         #region Task 1
