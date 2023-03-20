@@ -5,6 +5,7 @@ using UnityEngine;
 //This script will be attatched to a psuedo-game object (i.e invisible) and will be loaded once the game is started
 public class BoardManager : MonoBehaviour
 {
+    
     private static GameObject player1, player2;
     public static int diceSideThrown = 0;
     public static int player1StartNode = 0;
@@ -19,6 +20,7 @@ public class BoardManager : MonoBehaviour
 
     // Use this for initialization
     void Start () {
+        DontDestroyOnLoad(transform.gameObject);
         player1 = GameObject.Find("Player 1");
         player2 = GameObject.Find("Player 2");
         p1 = player1.GetComponent<PlayerMovement>();
@@ -26,6 +28,9 @@ public class BoardManager : MonoBehaviour
 
         DiceBox.OnDiceRolled += UpdateDiceMove;
         EventManager.OnLandMinigame += StartMinigame;
+
+        EventManager em = FindObjectOfType<EventManager>();
+        em.NowP1Turn();
     }
 
     // Update is called once per frame

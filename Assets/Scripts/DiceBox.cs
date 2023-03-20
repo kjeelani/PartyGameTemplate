@@ -33,6 +33,19 @@ public class DiceBox : MonoBehaviour
 
         diceSides = Resources.LoadAll<Sprite>("DiceSides/NewSides");
         diceAnimation = Resources.LoadAll<Sprite>("DiceAnimation/");
+
+        transform.localScale = Vector3.zero;
+        PlayerMovement.DicePopUp += PopUp;
+    }
+
+    private void OnDisable()
+    {
+        PlayerMovement.DicePopUp -= PopUp;
+    }
+
+    private void PopUp()
+    {
+        transform.DOScale(2f, 0.5f).SetEase(Ease.OutBack);
     }
 
     private void OnMouseDown()
@@ -42,7 +55,7 @@ public class DiceBox : MonoBehaviour
             StartCoroutine("DiceRoll");
             coroutineAllowed = false;
         }
-            
+
     }
 
     private IEnumerator DiceRoll()
@@ -70,5 +83,18 @@ public class DiceBox : MonoBehaviour
         OnDiceRolled(numberRolled);
 
         coroutineAllowed = true;
+    }
+
+    private void OnMouseEnter()
+    {
+        transform.DOScale(2.15f, 0.3f).SetEase(Ease.OutCubic);
+    }
+    private void OnMouseExit()
+    {
+        transform.DOScale(2f, 0.2f).SetEase(Ease.InCubic);
+    }
+    private void OnMouseUp()
+    {
+        transform.DOScale(2f, 0.2f).SetEase(Ease.InCubic);
     }
 }

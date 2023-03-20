@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
+using DG;
+using DG.Tweening;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -23,18 +25,69 @@ public class PlayerMovement : MonoBehaviour
     private AudioClip coinSound;
     private AudioClip minigameSound;
 
+    private GameObject DiceBubble;
+    private GameObject dice;
+
+    public delegate void PlayerEvent();
+    public static event PlayerEvent DicePopUp;
+
+    public enum Player { P1, P2 }
+    public Player whichPlayer;
+
     private void Start() {
         transform.position = nodes[nodeIndex].transform.position;
         currentNodeType = nodes[nodeIndex].gameObject;
         anim = GetComponent<Animator>();
+
+        DiceBubble = transform.GetChild(0).gameObject;
+        dice = FindObjectOfType<DiceBox>().gameObject;
+
         audioS = GetComponent<AudioSource>();
         tileSound = Resources.Load<AudioClip>("TileSound");
         coinSound = Resources.Load<AudioClip>("CoinSound");
         minigameSound = Resources.Load<AudioClip>("MinigameSound");
+
+        playerCamera.Priority = 0;
+
+        EventManager.OnP1Turn += MyTurn;
+    }
+    private void MyTurn()
+    {
+        if ((BoardManager.currentTurn == BoardManager.Turn.P1 && whichPlayer == Player.P1)
+            || (BoardManager.currentTurn == BoardManager.Turn.P2 && whichPlayer == Player.P2))
+        {
+            StartCoroutine("Focus");
+        }
+    }
+    IEnumerator Focus()
+    {
+        yield return new WaitForSeconds(2f);
+        playerCamera.Priority = 25;
+        yield return new WaitForSeconds(1f);
+        //dice bubble popup
+        DiceBubble.transform.localScale = Vector3.zero;
+        DiceBubble.transform.DOScale(1.5f, 0.5f).SetEase(Ease.OutBack);
+        yield return new WaitForSeconds(1f);
+        dice.transform.SetPositionAndRotation(DiceBubble.transform.position, dice.transform.rotation);
+        DicePopUp();
+
+    }
+    private void StopTurn()
+    {
+        StartCoroutine("UnFocus");
+    }
+    IEnumerator UnFocus()
+    {
+        isAnyMoving = false;
+        anim.SetBool("Moving", false);
+        playerCamera.Priority = 0;
+        yield return new WaitForSeconds(2f);
+        //Signify player 2's turn 
+        NodeAction();
     }
 
     public void Move() {
-        playerCamera.Priority = 25;
+        
         StartCoroutine("MoveToNextNode");
     }
 
@@ -42,6 +95,8 @@ public class PlayerMovement : MonoBehaviour
     {
         isAnyMoving = true; // set the flag to indicate that the object is moving
         anim.SetBool("Moving", true);
+        DiceBubble.transform.DOScale(0f, 0.2f).SetEase(Ease.OutCubic);
+
         for (int i = 0; i < BoardManager.diceSideThrown; i++)
         {
             yield return new WaitForSeconds(0.3f); // wait for the specified delay
@@ -67,10 +122,8 @@ public class PlayerMovement : MonoBehaviour
                 nodeIndex = 0; // if we've reached the end of the array, loop back to the beginning
             }
         }
-        isAnyMoving = false;
-        anim.SetBool("Moving", false);
-        playerCamera.Priority = 0;
-        NodeAction();
+        StopTurn();
+        
     }
 
     private void NodeAction()
@@ -89,6 +142,7 @@ public class PlayerMovement : MonoBehaviour
             //Update playerScore
             audioS.PlayOneShot(coinSound);
         }
+        
     }
 
 #region Character Move Animation Conditions

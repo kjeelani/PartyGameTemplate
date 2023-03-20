@@ -16,6 +16,8 @@ public class GameManager : MonoBehaviour
         EventManager.OnLoadMinigame += MinigameStart;
 
         EventManager.OnLoadMinigame += FadeOutMusic;
+        EventManager.OnLoadBoardMap += FadeOutMusic;
+        EventManager.OnLoadTitle += FadeOutMusic;
         audioS = GetComponent<AudioSource>();
         FadeInMusic();
     }
@@ -24,6 +26,8 @@ public class GameManager : MonoBehaviour
     {
         EventManager.OnLoadMinigame -= MinigameStart;
         EventManager.OnLoadMinigame -= FadeOutMusic;
+        EventManager.OnLoadBoardMap -= FadeOutMusic;
+        EventManager.OnLoadTitle -= FadeOutMusic;
     }
 
     // Update is called once per frame
@@ -48,6 +52,16 @@ public class GameManager : MonoBehaviour
 
     private void FadeOutMusic()
     {
-        audioS.DOFade(0f, 2f);
+        StartCoroutine("FadeOut");
+    }
+
+    IEnumerator FadeOut()
+    {
+        if (audioS != null)
+        {
+            audioS.DOFade(0f, 1f);
+            yield return new WaitForSeconds(1f);
+            audioS.Stop();
+        }
     }
 }

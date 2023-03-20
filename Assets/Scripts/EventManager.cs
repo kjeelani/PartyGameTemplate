@@ -17,6 +17,12 @@ public class EventManager : MonoBehaviour
 
     public static event BoardEvent OnLandMinigame;
 
+    public static event BoardEvent OnLandCoin;
+
+    public static event BoardEvent OnP1Turn;
+    public static event BoardEvent OnP2Turn;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -30,6 +36,14 @@ public class EventManager : MonoBehaviour
         LoadingScreen.OnAnimationFinished -= LoadTitleFinished;
     }
 
+    #region Player Turns
+
+    public void NowP1Turn() { OnP1Turn(); }
+
+    public void NowP2Turn() { OnP2Turn(); }
+
+    #endregion
+
     #region Landed On Minigame Tile
     public static void LandedOnMinigame()
     {
@@ -37,6 +51,7 @@ public class EventManager : MonoBehaviour
         OnLandMinigame();
     }
     #endregion
+
     #region Title Screen Loading
     public void LoadTitleTrigger()
     {

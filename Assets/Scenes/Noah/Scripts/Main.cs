@@ -198,6 +198,7 @@ public class Main : MonoBehaviour {
     }
 
     private void pressButton(int buttonNumber) {
+        Debug.Log("PRESSED");
         // If this button has not been selected before
         if (bombs[buttonNumber] == 0 && !gameOver && !isMovingP1 && !isMovingP2) {
             numCorrectButtons++;
@@ -331,6 +332,7 @@ public class Main : MonoBehaviour {
      */
     private void returnToMenu() {
         // TODO: Add a way for players to return back to the board
-        
+        EventManager em = FindObjectOfType<EventManager>();
+        em.LoadBoardMapTrigger();
     }
 }
