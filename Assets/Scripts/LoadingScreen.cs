@@ -36,7 +36,17 @@ public class LoadingScreen : MonoBehaviour
         if (ScreenType == Type.Title) EventManager.OnLoadTitle -= PlayAnimation;
     }
 
-    void PlayAnimation() { ani.Play(); }
+    void PlayAnimation() { StartCoroutine("PlayAni"); }
+
+    IEnumerator PlayAni()
+    {
+        //Indicate that board or minigame will be loading
+        //animation -- WILL BE IMPLEMENTED SOON
+        //add a little delay before showing loading screen
+        yield return new WaitForSeconds(1f);
+        ani.Play();
+        yield return null;
+    }
 
     void AnimationFinishedTrigger()
     {

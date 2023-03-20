@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Title Screen.unity
     guid: bd46fa2703ca34d65a6b6ef803649d86
+  - enabled: 1
+    path: Assets/Scenes/Noah/Scenes/Noah Scene.unity
+    guid: 29df93f82f95c4272a769eb4ab14f553
   m_configObjects: {}
