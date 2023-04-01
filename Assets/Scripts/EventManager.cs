@@ -52,6 +52,14 @@ public class EventManager : MonoBehaviour
     }
     #endregion
 
+    #region Landed On Coin Tile
+    public static void LandedOnCoin()
+    {
+        //Broadcast to system that a coin tile has been landed on
+        OnLandCoin();
+    }
+    #endregion
+
     #region Title Screen Loading
     public void LoadTitleTrigger()
     {
