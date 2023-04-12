@@ -15,7 +15,7 @@ public class Main : MonoBehaviour {
     private int playerIndex = 0, startingPlayerIndex = 0;
     private int round = 1;
     private int numCorrectButtons = 0;
-    private int numWinsToEndGame = 3;
+    private int numWinsToEndGame = 2;
     private int[] bombs;
     [SerializeField] private GameObject header, numRounds, button1, button2, button3, button4, button5, button6, button7, button8, button9, button10, p1Wins, p2Wins;
     private TextMeshProUGUI headerText, numRoundsText, p1WinsText, p2WinsText;
@@ -27,6 +27,8 @@ public class Main : MonoBehaviour {
     private bool isMovingP1, isMovingP2;
     private float lerpTimePlayer1, lerpTimePlayer2;
     private float moveSpeed = 0.8f;
+
+    private Animator animatorPlayer1, animatorPlayer2;
 
     private Image buttonImage1,
         buttonImage2,
@@ -45,6 +47,9 @@ public class Main : MonoBehaviour {
 
         player1.transform.position = leftSide;
         player2.transform.position = leftSide;
+
+        animatorPlayer1 = player1.GetComponent<Animator>();
+        animatorPlayer2 = player2.GetComponent<Animator>();
 
         startingP1 = leftSide;
         endingP1 = middle;
@@ -80,12 +85,22 @@ public class Main : MonoBehaviour {
 
     private void Update() {
         if (isMovingP1) {
+            moveAllPlayers(true);
             movePlayers(0, startingP1, endingP1);
         }
 
         if (isMovingP2) {
+            moveAllPlayers(true);
             movePlayers(1, startingP2, endingP2);
         }
+    }
+
+    private void moveAllPlayers(bool val) {
+        animatorPlayer1.SetBool("Moving", val);
+        animatorPlayer2.SetBool("Moving", val);
+        
+        animatorPlayer1.SetBool("Right", val);
+        animatorPlayer2.SetBool("Right", val);
     }
 
     private void movePlayers(int playerNumber, Vector3 starting, Vector3 ending) {
@@ -101,6 +116,7 @@ public class Main : MonoBehaviour {
             if (player1.transform.position == ending) {
                 lerpTimePlayer1 = 0;
                 isMovingP1 = false;
+                moveAllPlayers(false);
             }
         } else {
             lerpTimePlayer2 += Time.deltaTime;
@@ -114,6 +130,7 @@ public class Main : MonoBehaviour {
             if (player2.transform.position == ending) {
                 lerpTimePlayer2 = 0;
                 isMovingP2 = false;
+                moveAllPlayers(false);
             }
         }
     }
