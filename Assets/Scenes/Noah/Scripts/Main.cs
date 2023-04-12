@@ -9,7 +9,7 @@ public class Main : MonoBehaviour {
     private int currentPlayer = 0;
     private int numAlivePlayers = 2;
     private const int totalPlayers = 2;
-    private int numSlots = 10;
+    private int numSlots = 6;
     private bool gameOver = false;
     private int[] playerIDs;
     private int playerIndex = 0, startingPlayerIndex = 0;
