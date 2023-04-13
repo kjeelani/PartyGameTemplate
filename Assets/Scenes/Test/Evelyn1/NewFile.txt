@@ -1,6 +1,0 @@
-﻿collision
-player movement
-player collision: player disappear
-object gerneration script: periodically random coroutine every five seconds a block
-upper and lower bounds
-prefad
