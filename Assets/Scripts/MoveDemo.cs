@@ -59,5 +59,11 @@ public class MoveDemo : MonoBehaviour
             Vector2 currentPosition = transform.position;
             transform.position = new Vector2(currentPosition.x - normal.x * 0.05f, currentPosition.y - normal.y * 0.05f);
         }
+        if (collision.gameObject.tag == "coin") 
+        {
+            //checks if boject is coin or not
+            collision.gameObject.SetActive(false);
+        }
     }
+   
 }
