@@ -3,27 +3,39 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class NodeLogic : MonoBehaviour
-{   
-    public Color[] nodeColors;
+{
+    // 0: blue tile, 1: red tile, 2: coin tile, 3: minigame tile
+    public Sprite[] tileSprites;
+
     private SpriteRenderer sprite;
+
+    public enum NodeType { Minigame, Coin, Finish, None };
+    public enum DirectionChange { None, Right, Left};
+
+    public NodeType nodeType;
+    public DirectionChange directionChange;
     // Start is called before the first frame update
     void Start()
     {
+        sprite = gameObject.GetComponent<SpriteRenderer>();
         //Default for Blank - MiniGame - Points - Finish is White - Orange - Cyan - Green
-        nodeColors = new Color[]{new Color(1.0f,1.0f,1.0f,1.0f), new Color(1.0f,.65f,0f,1.0f), new Color(0f,1.0f,1.0f,1.0f), new Color(0f,0f,1.0f,0f)};
+        
         sprite = GetComponent<SpriteRenderer>();
         switch (gameObject.tag) {
             case "MiniGame":
-                sprite.color = nodeColors[1];
+                sprite.sprite = tileSprites[3];
+                nodeType = NodeType.Minigame;
                 break;
-            case "Points":
-                sprite.color = nodeColors[2];
+            case "Coin":
+                sprite.sprite = tileSprites[2];
+                nodeType = NodeType.Coin;
                 break;
             case "Finish":
-                sprite.color = nodeColors[3];
+                sprite.sprite = tileSprites[0];
                 break;
             default:
-                sprite.color = nodeColors[0];
+                sprite.sprite = tileSprites[0];
+                nodeType = NodeType.None;
                 break;
         }
     }
