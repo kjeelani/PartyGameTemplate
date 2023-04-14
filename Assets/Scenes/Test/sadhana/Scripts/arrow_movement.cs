@@ -1,12 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+
 
 public class arrow_movement : MonoBehaviour
 {
     Rigidbody2D Rb;
-
-    public float Speed;
+    
+    public float neutralSpeed;
+    public float fastSpeed;
+    public float slowSpeed;
+    public float statusTimeInSeconds;
+    float currentSpeed;
     float MovementX;
     float MovementY;
     
@@ -15,13 +21,38 @@ public class arrow_movement : MonoBehaviour
         Rb = GetComponent<Rigidbody2D>();
         MovementX = 0;
         MovementY = 0;
-        //Speed = 6.75F;
+        currentSpeed = neutralSpeed;
+    }
+
+    void OnTriggerEnter2D(Collider2D collision) {
+        StopAllCoroutines();
+        if (collision.gameObject.tag == "SpeedSquare") {
+            StartCoroutine(TempSpeedBuff(statusTimeInSeconds));
+        } else if (collision.gameObject.tag == "SlowSquare") {
+            StartCoroutine(TempSlowDebuff(statusTimeInSeconds));
+        } else if (collision.gameObject.tag == "End") {
+            Debug.Log("Player 1 Wins!");
+            //TODO: Delete this and instead go back to the board
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+    }
+
+    IEnumerator TempSpeedBuff(float waitTime) {
+        currentSpeed = fastSpeed;
+        yield return new WaitForSeconds(waitTime);
+        currentSpeed = neutralSpeed;
+    }
+
+    IEnumerator TempSlowDebuff(float waitTime) {
+        currentSpeed = slowSpeed;
+        yield return new WaitForSeconds(waitTime);
+        currentSpeed = neutralSpeed;
     }
 
     // Update is called once per frame
     void Update()
     {
-        Rb.velocity = new Vector2(MovementX * Speed * Time.deltaTime, MovementY * Speed * Time.deltaTime);
+        Rb.velocity = new Vector2(MovementX * currentSpeed * Time.deltaTime, MovementY * currentSpeed * Time.deltaTime);
 
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
