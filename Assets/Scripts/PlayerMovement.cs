@@ -57,11 +57,12 @@ public class PlayerMovement : MonoBehaviour
 
     private void StartTurn()
     {
-        if ((BoardManager.currentTurn == BoardManager.Turn.P1 && whichPlayer == Player.P1)
+        StartCoroutine("Focus");
+        /*if ((BoardManager.currentTurn == BoardManager.Turn.P1 && whichPlayer == Player.P1)
             || (BoardManager.currentTurn == BoardManager.Turn.P2 && whichPlayer == Player.P2))
         {
             StartCoroutine("Focus");
-        }
+        }*/
     }
     IEnumerator Focus()
     {

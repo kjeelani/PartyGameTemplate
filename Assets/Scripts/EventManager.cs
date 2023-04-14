@@ -99,9 +99,9 @@ public class EventManager : MonoBehaviour
       animation finished" event has been broadcasted    */
     private void LoadMinigameFinished()
     {
-        //string minigame = SelectMinigame(); <-- Uncomment after Task 1 Implemented
+        string minigame = SelectMinigame();
 
-        SceneManager.LoadScene("Noah Scene");
+        SceneManager.LoadScene(minigame);
     }
 
         #region Task 1
@@ -112,6 +112,19 @@ public class EventManager : MonoBehaviour
 
         private string SelectMinigame()
         {
+            int randomInt = Random.Range(1, 4);
+            switch (randomInt)
+            {
+                case 1:
+                    return "Noah Scene";
+                    break;
+                case 2:
+                    return "Dropper Minigame";
+                    break;
+                case 3:
+                    return "test_intro";
+                    break;
+            }
             return null;
         }
         #endregion

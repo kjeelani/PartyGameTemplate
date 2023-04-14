@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using TMPro;
 using DG;
 using DG.Tweening;
@@ -40,9 +41,14 @@ public class GameManager : MonoBehaviour
         audioS = GetComponent<AudioSource>();
         FadeInMusic();
 
-        p1ScoreText = GameObject.Find("p1 coin text");
-        p2ScoreText = GameObject.Find("p2 coin text");
-        UpdatePlayerScores();
+        string currentSceneName = SceneManager.GetActiveScene().name;
+        if (currentSceneName == "Test Board")
+        {
+            p1ScoreText = GameObject.Find("p1 coin text");
+            p2ScoreText = GameObject.Find("p2 coin text");
+            UpdatePlayerScores();
+        }
+        
     }
 
     private void OnDisable()

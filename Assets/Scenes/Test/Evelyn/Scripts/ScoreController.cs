@@ -14,14 +14,29 @@ public class ScoreController : MonoBehaviour
     void Update()
     {
         score.text = s.ToString();
-        if (s > 2)
+        if (s > 9)
         {
             if (gameObject.tag == "Player1")
-                Debug.Log("Player 1 Wins!");
+                score.text = "Player 1 Wins!";
+                
             else
-                Debug.Log("Player 2 Wins!");
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+                score.text = "Player 1 Wins!";
+
+            returnToMenu();
         }
+    }
+
+    private void returnToMenu()
+    {
+        StartCoroutine("goToMenu");
+    }
+
+    IEnumerator goToMenu()
+    {
+        yield return new WaitForSeconds(3f);
+        // TODO: Add a way for players to return back to the board
+        EventManager em = FindObjectOfType<EventManager>();
+        em.LoadBoardMapTrigger();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

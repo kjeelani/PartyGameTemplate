@@ -36,6 +36,7 @@ public class BoardManager : MonoBehaviour
     {
         yield return new WaitForSeconds(1f);
         em.NowP1Turn();
+        Debug.Log("PLAYER 1 IS GOING");
     }
 
     // Update is called once per frame
