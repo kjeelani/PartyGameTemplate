@@ -16,6 +16,8 @@ public class DiceBox : MonoBehaviour
     private AudioClip diceRollSound;
     private AudioClip diceFinishSound;
 
+    private bool clicked = false;
+
     //Events
     public delegate void DiceEvent(int num);
     //Event that minigame is being loaded
@@ -36,16 +38,25 @@ public class DiceBox : MonoBehaviour
 
         transform.localScale = Vector3.zero;
         PlayerMovement.DicePopUp += PopUp;
+        PlayerMovement.DiceVanish += Vanish;
     }
 
     private void OnDisable()
     {
         PlayerMovement.DicePopUp -= PopUp;
+        PlayerMovement.DiceVanish -= Vanish;
     }
 
     private void PopUp()
     {
-        transform.DOScale(2f, 0.5f).SetEase(Ease.OutBack);
+        transform.DOScale(1.6f, 0.5f).SetEase(Ease.OutBack);
+        coroutineAllowed = true;
+        clicked = false;
+    }
+
+    private void Vanish()
+    {
+        transform.DOScale(0f, 0.3f).SetEase(Ease.InBack);
     }
 
     private void OnMouseDown()
@@ -54,6 +65,7 @@ public class DiceBox : MonoBehaviour
         {
             StartCoroutine("DiceRoll");
             coroutineAllowed = false;
+            clicked = true;
         }
 
     }
@@ -82,19 +94,22 @@ public class DiceBox : MonoBehaviour
         //Broadcast Dice has been rolled
         OnDiceRolled(numberRolled);
 
-        coroutineAllowed = true;
     }
 
     private void OnMouseEnter()
     {
-        transform.DOScale(2.15f, 0.3f).SetEase(Ease.OutCubic);
+        if(clicked == false)
+        {
+            transform.DOScale(1.85f, 0.3f).SetEase(Ease.OutCubic);
+        }
+        
     }
     private void OnMouseExit()
     {
-        transform.DOScale(2f, 0.2f).SetEase(Ease.InCubic);
-    }
-    private void OnMouseUp()
-    {
-        transform.DOScale(2f, 0.2f).SetEase(Ease.InCubic);
+        if (clicked == false)
+        {
+            transform.DOScale(1.6f, 0.2f).SetEase(Ease.InCubic);
+        }
+        
     }
 }

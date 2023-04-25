@@ -29,7 +29,9 @@ public class PlayerMovement : MonoBehaviour
     private GameObject dice;
 
     public delegate void PlayerEvent();
+    public static event PlayerEvent SwitchTurns;
     public static event PlayerEvent DicePopUp;
+    public static event PlayerEvent DiceVanish;
 
     public enum Player { P1, P2 }
     public Player whichPlayer;
@@ -49,15 +51,18 @@ public class PlayerMovement : MonoBehaviour
 
         playerCamera.Priority = 0;
 
-        EventManager.OnP1Turn += MyTurn;
+        if (whichPlayer == Player.P1) { EventManager.OnP1Turn += StartTurn; }
+        if (whichPlayer == Player.P2) { EventManager.OnP2Turn += StartTurn; }
     }
-    private void MyTurn()
+
+    private void StartTurn()
     {
-        if ((BoardManager.currentTurn == BoardManager.Turn.P1 && whichPlayer == Player.P1)
+        StartCoroutine("Focus");
+        /*if ((BoardManager.currentTurn == BoardManager.Turn.P1 && whichPlayer == Player.P1)
             || (BoardManager.currentTurn == BoardManager.Turn.P2 && whichPlayer == Player.P2))
         {
             StartCoroutine("Focus");
-        }
+        }*/
     }
     IEnumerator Focus()
     {
@@ -93,9 +98,12 @@ public class PlayerMovement : MonoBehaviour
 
     IEnumerator MoveToNextNode()
     {
+        yield return new WaitForSeconds(1f);
+        DiceBubble.transform.DOScale(0f, 0.3f).SetEase(Ease.OutCubic);
+        DiceVanish();
+        yield return new WaitForSeconds(1f);
         isAnyMoving = true; // set the flag to indicate that the object is moving
         anim.SetBool("Moving", true);
-        DiceBubble.transform.DOScale(0f, 0.2f).SetEase(Ease.OutCubic);
 
         for (int i = 0; i < BoardManager.diceSideThrown; i++)
         {
@@ -140,7 +148,13 @@ public class PlayerMovement : MonoBehaviour
         if(Node.nodeType == NodeLogic.NodeType.Coin)
         {
             //Update playerScore
+            EventManager.LandedOnCoin();
             audioS.PlayOneShot(coinSound);
+            SwitchTurns();
+        }
+        else if (Node.nodeType == NodeLogic.NodeType.None)
+        {
+            SwitchTurns();
         }
         
     }
@@ -166,4 +180,10 @@ public class PlayerMovement : MonoBehaviour
         
     }
     #endregion
+
+    private void OnDisable()
+    {
+        EventManager.OnP1Turn -= StartTurn;
+        EventManager.OnP2Turn -= StartTurn;
+    }
 }

@@ -3,28 +3,22 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags:
-  - Border
-  - Points
-  - MiniGame
-  - Blank
-  - Board
-  - Coin
+  tags: []
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - Player
+  - 
   - Water
   - UI
   - 
   - 
   - 
   - 
-  - Ground
   - 
   - 
-  - Coin
+  - 
+  - 
   - 
   - 
   - 
@@ -44,9 +38,6 @@ TagManager:
   - 
   - 
   m_SortingLayers:
-  - name: Player
-    uniqueID: 2087775993
-    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0

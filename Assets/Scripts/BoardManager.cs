@@ -5,7 +5,7 @@ using UnityEngine;
 //This script will be attatched to a psuedo-game object (i.e invisible) and will be loaded once the game is started
 public class BoardManager : MonoBehaviour
 {
-    
+    private EventManager em;
     private static GameObject player1, player2;
     public static int diceSideThrown = 0;
     public static int player1StartNode = 0;
@@ -18,9 +18,8 @@ public class BoardManager : MonoBehaviour
     private PlayerMovement p1;
     private PlayerMovement p2;
 
-    // Use this for initialization
     void Start () {
-        DontDestroyOnLoad(transform.gameObject);
+        em = GameObject.Find("Event Manager").GetComponent<EventManager>();
         player1 = GameObject.Find("Player 1");
         player2 = GameObject.Find("Player 2");
         p1 = player1.GetComponent<PlayerMovement>();
@@ -29,8 +28,15 @@ public class BoardManager : MonoBehaviour
         DiceBox.OnDiceRolled += UpdateDiceMove;
         EventManager.OnLandMinigame += StartMinigame;
 
-        EventManager em = FindObjectOfType<EventManager>();
+        PlayerMovement.SwitchTurns += UpdateTurns;
+        StartCoroutine("InitialDelay");
+    }
+
+    IEnumerator InitialDelay()
+    {
+        yield return new WaitForSeconds(1f);
         em.NowP1Turn();
+        Debug.Log("PLAYER 1 IS GOING");
     }
 
     // Update is called once per frame
@@ -41,13 +47,22 @@ public class BoardManager : MonoBehaviour
 
     private void StartMinigame()
     {
-        EventManager em = FindObjectOfType<EventManager>();
-
-
         //Signify that a minigame was landed on
         //Choose Random minigame
         //Load that minigame
         em.LoadMinigameTrigger();
+    }
+
+    private void UpdateTurns()
+    {
+        if (currentTurn == Turn.P1)
+        {
+            em.NowP1Turn();
+        }
+        else if (currentTurn == Turn.P2)
+        {
+            em.NowP2Turn();
+        }
     }
 
     private void UpdateDiceMove(int number)
@@ -68,5 +83,6 @@ public class BoardManager : MonoBehaviour
         //Unsubscribe from event
         DiceBox.OnDiceRolled -= UpdateDiceMove;
         EventManager.OnLandMinigame -= StartMinigame;
+        PlayerMovement.SwitchTurns -= UpdateTurns;
     }
 }
