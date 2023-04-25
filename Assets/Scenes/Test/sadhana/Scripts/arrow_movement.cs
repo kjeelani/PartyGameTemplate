@@ -66,10 +66,7 @@ public class arrow_movement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float forwardX = MovementX * currentSpeed;
-        float forwardY = MovementY * currentSpeed;
-        transform.position = new Vector2(transform.position.x + forwardX, transform.position.y + forwardY); 
-        //Rb.velocity = new Vector2(MovementX * currentSpeed * Time.deltaTime, MovementY * currentSpeed * Time.deltaTime);
+        Rb.velocity = new Vector2(MovementX * currentSpeed, MovementY * currentSpeed);
 
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {

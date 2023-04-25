@@ -3053,9 +3053,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bfa80b0fcd0d47b48bbc27f4ef49bf39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  neutralSpeed: 0.1
-  fastSpeed: 0.2
-  slowSpeed: 0.05
+  neutralSpeed: 5
+  fastSpeed: 6
+  slowSpeed: 4
   statusTimeInSeconds: 1.5
 --- !u!1 &1583930499
 GameObject:
@@ -3447,9 +3447,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8b41aacc2c29374faf4202e9f12ae8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  neutralSpeed: 5000
-  fastSpeed: 6500
-  slowSpeed: 3500
+  neutralSpeed: 5
+  fastSpeed: 6
+  slowSpeed: 4
   statusTimeInSeconds: 1.5
 --- !u!1 &1713919133
 GameObject:

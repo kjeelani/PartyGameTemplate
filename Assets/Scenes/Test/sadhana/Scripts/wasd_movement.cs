@@ -67,7 +67,7 @@ public class wasd_movement : MonoBehaviour
     void Update()
     {
 
-        Rb.velocity = new Vector2(MovementX * currentSpeed * Time.deltaTime, MovementY * currentSpeed * Time.deltaTime);
+        Rb.velocity = new Vector2(MovementX * currentSpeed, MovementY * currentSpeed);
 
         if (Input.GetKeyDown(KeyCode.W))
         {
