@@ -19,7 +19,7 @@ public class Player1Movement : MonoBehaviour
     
     void FixedUpdate()
     {
-        float h = Input.GetAxisRaw("HorizontalArrowKeys");
+        float h = Input.GetAxisRaw("HorizontalADKeys");
 
         if (h > 0)
             myBody.velocity = Vector2.right * speed;
