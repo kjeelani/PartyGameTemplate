@@ -241,6 +241,7 @@ public class Main : MonoBehaviour {
                 
                 headerText.text = "RESTART ROUND\nPLAYER " + (currentPlayer + 1) + ": Button " + (buttonNumber + 1) + " has no bomb";
                 gameOver = true;
+                currentDuration = 0.5f;
                 StartCoroutine(nextRound());
             } else {
                 headerText.text = "PLAYER " + (currentPlayer + 1) + ": Button " + (buttonNumber + 1) + " has no bomb";
