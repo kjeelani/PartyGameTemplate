@@ -9,6 +9,8 @@ public class Main : MonoBehaviour {
     private int currentPlayer = 0;
     private int numAlivePlayers = 2;
     private const int totalPlayers = 2;
+    private float currentDuration = 0.5f;
+    private bool isDrumrolling = false;
     private int numSlots = 6;
     private bool gameOver = false;
     private int[] playerIDs;
@@ -214,10 +216,19 @@ public class Main : MonoBehaviour {
         }
     }
 
-    private void pressButton(int buttonNumber) {
+    private IEnumerator pressButton(int buttonNumber) {
+        // Play the noise
+        if (!isDrumrolling && !gameOver && !isMovingP1 && !isMovingP2) {
+            AudioManager.playDrumroll(4.0f - currentDuration);
+            isDrumrolling = true;
+            yield return new WaitForSeconds(currentDuration);
+            isDrumrolling = false;
+            currentDuration += 0.5f;
+        }
+
         Debug.Log("PRESSED");
         // If this button has not been selected before
-        if (bombs[buttonNumber] == 0 && !gameOver && !isMovingP1 && !isMovingP2) {
+        if (bombs[buttonNumber] == 0 && !gameOver && !isMovingP1 && !isMovingP2 && !isDrumrolling) {
             numCorrectButtons++;
             changeButtonColor(buttonNumber, Color.green);
 
@@ -230,6 +241,7 @@ public class Main : MonoBehaviour {
                 
                 headerText.text = "RESTART ROUND\nPLAYER " + (currentPlayer + 1) + ": Button " + (buttonNumber + 1) + " has no bomb";
                 gameOver = true;
+                currentDuration = 0.5f;
                 StartCoroutine(nextRound());
             } else {
                 headerText.text = "PLAYER " + (currentPlayer + 1) + ": Button " + (buttonNumber + 1) + " has no bomb";
@@ -237,7 +249,6 @@ public class Main : MonoBehaviour {
             bombs[buttonNumber] = -1;
 
             if (currentPlayer == 0) {
-                Debug.Log("HELLO");
                 startingP1 = middle;
                 endingP1 = rightSide;
                 
@@ -263,6 +274,7 @@ public class Main : MonoBehaviour {
         // Player has selected the bomb
         if (bombs[buttonNumber] == 1 && !gameOver && !(isMovingP1 || isMovingP2)) {
             changeButtonColor(buttonNumber, Color.red);
+            currentDuration = 0.5f;
             
             headerText.text = "GAME OVER!\nPLAYER " + (currentPlayer + 1) + ": Button " + (buttonNumber + 1) + " has the bomb!";
             numAlivePlayers--;
@@ -327,7 +339,7 @@ public class Main : MonoBehaviour {
 
     // This function can be accessed from the Unity engine
     public void press(int buttonNumber) {
-        pressButton(buttonNumber);
+        StartCoroutine(pressButton(buttonNumber));
     }
 
     private void incrementCurrentPlayer() {
@@ -337,11 +349,6 @@ public class Main : MonoBehaviour {
         }
 
         currentPlayer = playerIDs[playerIndex];
-    }
-
-    private IEnumerator drumroll(int duration) {
-        // Play the noise
-        yield return new WaitForSeconds(duration);
     }
 
     /**
