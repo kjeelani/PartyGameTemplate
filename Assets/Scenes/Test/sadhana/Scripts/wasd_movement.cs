@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using UnityEngine;
+using TMPro;
 
 public class wasd_movement : MonoBehaviour
 {
@@ -14,6 +15,10 @@ public class wasd_movement : MonoBehaviour
     float currentSpeed;
     float MovementX;
     float MovementY;
+
+    private Animator anim;
+    private AudioSource audioS;
+    public GameObject headerText;
     
     void Start()
     {
@@ -21,6 +26,9 @@ public class wasd_movement : MonoBehaviour
         MovementX = 0;
         MovementY = 0;
         currentSpeed = neutralSpeed;
+
+        anim = GetComponent<Animator>();
+        audioS = GetComponent<AudioSource>();
     }
 
     void OnTriggerEnter2D(Collider2D collision) {
@@ -45,6 +53,10 @@ public class wasd_movement : MonoBehaviour
 
     IEnumerator goToMenu()
     {
+        headerText.GetComponent<TextMeshProUGUI>().text = "PLAYER 2 WINS! (+5 coins)";
+        headerText.SetActive(true);
+        audioS.Play();
+        PlayerPrefs.SetInt("P2Score", PlayerPrefs.GetInt("P2Score") + 5);
         yield return new WaitForSeconds(3f);
         // TODO: Add a way for players to return back to the board
         EventManager em = FindObjectOfType<EventManager>();
@@ -72,27 +84,38 @@ public class wasd_movement : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.W))
         {
             MovementY = 1;
+            anim.SetBool("Moving", true);
         }
         if (Input.GetKeyDown(KeyCode.S))
         {
             MovementY = -1;
+            anim.SetBool("Moving", true);
         }
 
         if (Input.GetKeyDown(KeyCode.D))
         {
             MovementX = 1;
+            anim.SetBool("Moving", true);
+            anim.SetBool("Right", true);
+            anim.SetBool("Left", false);
         }
         if (Input.GetKeyDown(KeyCode.A))
         {
             MovementX = -1;
+            anim.SetBool("Moving", true);
+            anim.SetBool("Left", true);
+            anim.SetBool("Right", false);
         }
         if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.S))
         {
             MovementY = 0;
+            
         }
         if (Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.D))
         {
             MovementX = 0;
+
+            anim.SetBool("Moving", false);
         }
 
     }

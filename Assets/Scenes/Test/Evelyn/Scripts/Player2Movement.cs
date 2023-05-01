@@ -10,16 +10,23 @@ public class Player2Movement : MonoBehaviour
 
     public float startXPos = 7;
 
+    private Animator anim;
+
     void Start()
     {
         this.transform.position = new Vector2(startXPos, this.transform.position.y);
         myBody = GetComponent<Rigidbody2D>();
+
+        anim = GetComponent<Animator>();
     }
 
     
     void FixedUpdate()
     {
         float h = Input.GetAxisRaw("HorizontalArrowKeys");
+
+        //get Bucket_Move animation float
+        anim.SetFloat("Bucket Move", h);
 
         if (h > 0)
             myBody.velocity = Vector2.right * speed;

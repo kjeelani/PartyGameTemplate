@@ -120,7 +120,7 @@ public class PlayerMovement_Student : MonoBehaviour
         studentPlayer.velocity = new Vector2(input * speed, studentPlayer.velocity.y);    
     }
 
-    private void OnCollisionEnter2D(Collider2D collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("void"))
         {

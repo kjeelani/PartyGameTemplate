@@ -37,8 +37,8 @@ public class PlayerMovement : MonoBehaviour
     public Player whichPlayer;
 
     private void Start() {
-        transform.position = nodes[nodeIndex].transform.position;
-        currentNodeType = nodes[nodeIndex].gameObject;
+        LoadData();
+        
         anim = GetComponent<Animator>();
 
         DiceBubble = transform.GetChild(0).gameObject;
@@ -57,12 +57,14 @@ public class PlayerMovement : MonoBehaviour
 
     private void StartTurn()
     {
-        StartCoroutine("Focus");
-        /*if ((BoardManager.currentTurn == BoardManager.Turn.P1 && whichPlayer == Player.P1)
+
+        Debug.Log(BoardManager.currentTurn);
+        Debug.Log(whichPlayer);
+        if ((BoardManager.currentTurn == BoardManager.Turn.P1 && whichPlayer == Player.P1)
             || (BoardManager.currentTurn == BoardManager.Turn.P2 && whichPlayer == Player.P2))
         {
             StartCoroutine("Focus");
-        }*/
+        }
     }
     IEnumerator Focus()
     {
@@ -77,10 +79,27 @@ public class PlayerMovement : MonoBehaviour
         DicePopUp();
 
     }
+
+    private void LoadData()
+    {
+        if (whichPlayer == Player.P1)
+        {
+            nodeIndex = PlayerPrefs.GetInt("Player1Node", 0);
+        }
+        else if (whichPlayer == Player.P2)
+        {
+            nodeIndex = PlayerPrefs.GetInt("Player2Node", 0);
+        }
+
+        transform.position = nodes[nodeIndex].position;
+        currentNodeType = nodes[nodeIndex].gameObject;
+    }
+
     private void StopTurn()
     {
         StartCoroutine("UnFocus");
     }
+
     IEnumerator UnFocus()
     {
         isAnyMoving = false;
@@ -89,6 +108,13 @@ public class PlayerMovement : MonoBehaviour
         yield return new WaitForSeconds(2f);
         //Signify player 2's turn 
         NodeAction();
+
+        if (whichPlayer == Player.P1) {
+            PlayerPrefs.SetInt("Player1Node", nodeIndex);
+        }
+        else if (whichPlayer == Player.P2) {
+            PlayerPrefs.SetInt("Player2Node", nodeIndex);
+        }
     }
 
     public void Move() {
@@ -128,6 +154,7 @@ public class PlayerMovement : MonoBehaviour
                 //reached the end
                 Debug.Log("REACHED THE END");
                 nodeIndex = 0; // if we've reached the end of the array, loop back to the beginning
+                transform.position = nodes[nodeIndex].position;
             }
         }
         StopTurn();

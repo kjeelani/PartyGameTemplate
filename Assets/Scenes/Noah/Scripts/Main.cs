@@ -22,6 +22,10 @@ public class Main : MonoBehaviour {
     [SerializeField] private GameObject header, numRounds, button1, button2, button3, button4, button5, button6, button7, button8, button9, button10, p1Wins, p2Wins;
     private TextMeshProUGUI headerText, numRoundsText, p1WinsText, p2WinsText;
     private int numP1Wins, numP2Wins;
+    public GameObject bombObject;
+    public AudioClip ticking, explode;
+    private AudioSource bombAS;
+    private GameObject cameraA;
 
     // Character related variables
     public GameObject player1, player2;
@@ -71,6 +75,7 @@ public class Main : MonoBehaviour {
         foreach (var bomb in bombs) {
             Debug.Log(bomb);
         }
+        bombAS = bombObject.GetComponent<AudioSource>();
 
         // Used to change the color of the buttons later
         buttonImage1 = button1.GetComponent<Image>();
@@ -83,6 +88,8 @@ public class Main : MonoBehaviour {
         buttonImage8 = button8.GetComponent<Image>();
         buttonImage9 = button9.GetComponent<Image>();
         buttonImage10 = button10.GetComponent<Image>();
+
+        cameraA = GameObject.FindObjectOfType<ScreenShake>().gameObject;
     }
 
     private void Update() {
@@ -163,11 +170,13 @@ public class Main : MonoBehaviour {
         if (numP1Wins >= numWinsToEndGame) {
             // Player 1 has enough wins to end the game
             headerText.text = "Player 1 Won The Game!";
+            PlayerPrefs.SetInt("P1Score", PlayerPrefs.GetInt("P1Score") + 5);
             yield return new WaitForSeconds(3);
             returnToMenu();
         } else if (numP2Wins >= numWinsToEndGame) {
             // Player 2 has enough wins to end the game
             headerText.text = "Player 2 Won The Game!";
+            PlayerPrefs.SetInt("P2Score", PlayerPrefs.GetInt("P2Score") + 5);
             yield return new WaitForSeconds(3);
             returnToMenu();
         } else {
@@ -230,7 +239,8 @@ public class Main : MonoBehaviour {
         // If this button has not been selected before
         if (bombs[buttonNumber] == 0 && !gameOver && !isMovingP1 && !isMovingP2 && !isDrumrolling) {
             numCorrectButtons++;
-            changeButtonColor(buttonNumber, Color.green);
+            Color32 green = new Color32(82, 215, 137, 255);
+            changeButtonColor(buttonNumber, green);
 
             // If we selected all the right buttons, reset
             if (numCorrectButtons == numSlots - 1) {
@@ -273,7 +283,8 @@ public class Main : MonoBehaviour {
 
         // Player has selected the bomb
         if (bombs[buttonNumber] == 1 && !gameOver && !(isMovingP1 || isMovingP2)) {
-            changeButtonColor(buttonNumber, Color.red);
+            Color32 red = new Color32(221, 92, 70, 255);
+            changeButtonColor(buttonNumber, red);
             currentDuration = 0.5f;
             
             headerText.text = "GAME OVER!\nPLAYER " + (currentPlayer + 1) + ": Button " + (buttonNumber + 1) + " has the bomb!";
@@ -290,11 +301,24 @@ public class Main : MonoBehaviour {
                 // If player 2 picked the bomb, player 1 wins
                 numP1Wins++;
             }
+            StartCoroutine("bombExplode");
             
             updateWinCounts();
 
             StartCoroutine(nextRound());
         }
+    }
+
+    private IEnumerator bombExplode()
+    {
+        bombObject.SetActive(true);
+        bombAS.clip = ticking;
+        bombAS.PlayOneShot(ticking);
+        yield return new WaitForSeconds(1f);
+        bombAS.PlayOneShot(explode);
+        cameraA.GetComponent<ScreenShake>().Shake();
+        yield return new WaitForSeconds(1f);
+        bombObject.SetActive(false);
     }
 
     private void updateWinCounts() {
