@@ -7,24 +7,9 @@ using TMPro;
 
 public class ScoreController : MonoBehaviour
 {
-    public TextMeshProUGUI score;
+    public TextMeshProUGUI score, header;
 
     private int s;
-
-    void Update()
-    {
-        score.text = s.ToString();
-        if (s > 9)
-        {
-            if (gameObject.tag == "Player1")
-                score.text = "Player 1 Wins!";
-                
-            else
-                score.text = "Player 1 Wins!";
-
-            returnToMenu();
-        }
-    }
 
     private void returnToMenu()
     {
@@ -41,20 +26,35 @@ public class ScoreController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.tag == "Bomb")
+        if (collision.gameObject.CompareTag("Bomb"))
         {
             Destroy(collision.gameObject);
             if (s > 0)
                 s--;
         }
-    }
 
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        if (collision.tag == "Box")
+        if (collision.gameObject.CompareTag("Box"))
         {
             Destroy(collision.gameObject);
             s++;
+
+            score.text = s.ToString();
+            if (s > 9)
+            {
+                if (gameObject.tag == "Player1")
+                {
+                    header.text = "Player 1 Wins! (+5 coins)";
+                    PlayerPrefs.SetInt("P1Score", PlayerPrefs.GetInt("P1Score") + 5);
+                }
+                    
+                else
+                {
+                    header.text = "Player 2 Wins! (+5 coins)";
+                    PlayerPrefs.SetInt("P2Score", PlayerPrefs.GetInt("P2Score") + 5);
+                } 
+
+                returnToMenu();
+            }
         }
     }
 }

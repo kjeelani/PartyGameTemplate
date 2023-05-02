@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 
 public class arrow_movement : MonoBehaviour
@@ -15,6 +16,10 @@ public class arrow_movement : MonoBehaviour
     float currentSpeed;
     float MovementX;
     float MovementY;
+
+    private Animator anim;
+    private AudioSource audioS;
+    public GameObject headerText;
     
     void Start()
     {
@@ -22,6 +27,9 @@ public class arrow_movement : MonoBehaviour
         MovementX = 0;
         MovementY = 0;
         currentSpeed = neutralSpeed;
+
+        anim = GetComponent<Animator>();
+        audioS = GetComponent<AudioSource>();
     }
 
     void OnTriggerEnter2D(Collider2D collision) {
@@ -45,6 +53,10 @@ public class arrow_movement : MonoBehaviour
 
     IEnumerator goToMenu()
     {
+        headerText.GetComponent<TextMeshProUGUI>().text = "PLAYER 1 WINS! (+5 coins)";
+        headerText.SetActive(true);
+        audioS.Play();
+        PlayerPrefs.SetInt("P1Score", PlayerPrefs.GetInt("P1Score") + 5);
         yield return new WaitForSeconds(3f);
         // TODO: Add a way for players to return back to the board
         EventManager em = FindObjectOfType<EventManager>();
@@ -71,27 +83,39 @@ public class arrow_movement : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
             MovementY = 1;
+            anim.SetBool("Moving", true);
         }
         if (Input.GetKeyDown(KeyCode.DownArrow))
         {
             MovementY = -1;
+            anim.SetBool("Moving", true);
         }
 
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {
             MovementX = 1;
+            anim.SetBool("Moving", true);
+            anim.SetBool("Right", true);
+            anim.SetBool("Left", false);
         }
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
             MovementX = -1;
+            anim.SetBool("Moving", true);
+            anim.SetBool("Left", true);
+            anim.SetBool("Right", false);
         }
         if (Input.GetKeyUp(KeyCode.UpArrow) || Input.GetKeyUp(KeyCode.DownArrow)) 
         {
             MovementY = 0;
+            
         }
         if (Input.GetKeyUp(KeyCode.LeftArrow) || Input.GetKeyUp(KeyCode.RightArrow))
         {
             MovementX = 0;
+            anim.SetBool("Moving", false);
         }
+
+        
     }
 }

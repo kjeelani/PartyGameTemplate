@@ -69,6 +69,7 @@ public class EventManager : MonoBehaviour
     private void LoadTitleFinished()
     {
         SceneManager.LoadScene("Title Screen");
+        PlayerPrefs.DeleteAll(); // Reset all data when going back to the board
     }
     #endregion
 
@@ -82,6 +83,7 @@ public class EventManager : MonoBehaviour
     private void LoadBoardMapFinished()
     {
         SceneManager.LoadScene("Test Board");
+        
     }
 
     #endregion
@@ -112,7 +114,7 @@ public class EventManager : MonoBehaviour
 
         private string SelectMinigame()
         {
-            int randomInt = Random.Range(1, 4);
+            int randomInt = Random.Range(1, 5);
             switch (randomInt)
             {
                 case 1:
@@ -123,6 +125,9 @@ public class EventManager : MonoBehaviour
                     break;
                 case 3:
                     return "test_intro";
+                    break;
+                case 4:
+                    return "Berkeley_World";
                     break;
             }
             return null;

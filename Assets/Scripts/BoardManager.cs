@@ -35,8 +35,8 @@ public class BoardManager : MonoBehaviour
     IEnumerator InitialDelay()
     {
         yield return new WaitForSeconds(1f);
-        em.NowP1Turn();
-        Debug.Log("PLAYER 1 IS GOING");
+        if (currentTurn == Turn.P1) { em.NowP1Turn(); }
+        else if (currentTurn == Turn.P2) { em.NowP2Turn(); }
     }
 
     // Update is called once per frame
